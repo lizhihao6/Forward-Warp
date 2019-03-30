@@ -1,6 +1,7 @@
 #include <torch/torch.h>
 #include <vector>
 
+#include "forward_warp.h"
 using at::native::detail::GridSamplerInterpolation;
 
 std::vector<at::Tensor> forward_warp_cuda_forward(

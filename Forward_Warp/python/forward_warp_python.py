@@ -16,7 +16,7 @@ class Forward_Warp_Python:
                     for w in range(W):
                         x = w + flow[b, h, w, 0]
                         y = h + flow[b, h, w, 1]
-                        nw = (torch.floor(x), torch.floor(y))
+                        nw = (int(torch.floor(x)), int(torch.floor(y)))
                         ne = (nw[0]+1, nw[1])
                         sw = (nw[0], nw[1]+1)
                         se = (nw[0]+1, nw[1]+1)
@@ -35,8 +35,8 @@ class Forward_Warp_Python:
             for b in range(B):
                 for h in range(H):
                     for w in range(W):
-                        x = w + round_flow[b, h, w, 0]
-                        y = h + round_flow[b, h, w, 1]
+                        x = w + int(round_flow[b, h, w, 0])
+                        y = h + int(round_flow[b, h, w, 1])
                         if x >= 0 and x < W and y >= 0 and y < H:
                             im1[b, :, y, x] = im0[b, :, h, w]
         return im1
@@ -55,8 +55,8 @@ class Forward_Warp_Python:
                     for w in range(W):
                         x = w + flow[b, h, w, 0]
                         y = h + flow[b, h, w, 1]
-                        x_f = torch.floor(x)
-                        y_f = torch.floor(y)
+                        x_f = int(torch.floor(x))
+                        y_f = int(torch.floor(y))
                         x_c = x_f+1
                         y_c = y_f+1
                         nw = (x_f, y_f)
@@ -74,7 +74,7 @@ class Forward_Warp_Python:
                             sw_grad = grad_output[b, :, sw[1], sw[0]]
                             se_grad = grad_output[b, :, se[1], se[0]]
                             im0_grad[b, :, h, w] += nw_k*nw_grad
-                            im0_grad[b, :, h, w] += ne_ne_grad
+                            im0_grad[b, :, h, w] += ne_k*ne_grad
                             im0_grad[b, :, h, w] += sw_k*sw_grad
                             im0_grad[b, :, h, w] += se_k*se_grad
                             flow_grad_x = torch.zeros(C)
@@ -94,8 +94,8 @@ class Forward_Warp_Python:
             for b in range(B):
                 for h in range(H):
                     for w in range(W):
-                        x = w + round_flow[b, h, w, 0]
-                        y = h + round_flow[b, h, w, 1]
+                        x = w + int(round_flow[b, h, w, 0])
+                        y = h + int(round_flow[b, h, w, 1])
                         if x >= 0 and x < W and y >= 0 and y < H:
                             im0_grad[b, :, h, w] = grad_output[b, :, y, x]
         return im0_grad, flow_grad
