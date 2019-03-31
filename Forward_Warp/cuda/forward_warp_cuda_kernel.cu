@@ -32,7 +32,6 @@ __global__ void forward_warp_cuda_forward_kernel(
     const int H,
     const int W,
     const GridSamplerInterpolation interpolation_mode) {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
   CUDA_KERNEL_LOOP(index, total_step-1) {
     const int b = index / (H * W);
     const int h = (index-b*H*W) / W;
