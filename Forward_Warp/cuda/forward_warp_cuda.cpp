@@ -4,7 +4,7 @@
 #include "forward_warp.h"
 using at::native::detail::GridSamplerInterpolation;
 
-std::vector<at::Tensor> forward_warp_cuda_forward(
+at::Tensor forward_warp_cuda_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const GridSamplerInterpolation interpolation_mode);
@@ -14,16 +14,17 @@ std::vector<at::Tensor> forward_warp_cuda_backward(
     const at::Tensor flow,
     const GridSamplerInterpolation interpolation_mode);
 
-#define CHECK_CUDA(x) AT_ASSERT(x.type().is_cuda(), #x " must be a CUDA tensor")
-#define CHECK_CONTIGUOUS(x) AT_ASSERT(x.is_contiguous(), #x " must be contiguous")
-#define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
+// Because of the incompatible of Pytorch 1.0 && Pytorch 0.4, we have to annotation this.
+// #define CHECK_CUDA(x) AT_ASSERT(x.type().is_cuda(), #x " must be a CUDA tensor")
+// #define CHECK_CONTIGUOUS(x) AT_ASSERT(x.is_contiguous(), #x " must be contiguous")
+// #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
-std::vector<at::Tensor> forward_warp_forward(
+at::Tensor forward_warp_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const int interpolation_mode){
-  CHECK_INPUT(im0);
-  CHECK_INPUT(flow);
+  // CHECK_INPUT(im0);
+  // CHECK_INPUT(flow);
   return forward_warp_cuda_forward(im0, flow, (GridSamplerInterpolation)interpolation_mode);
 }
 
@@ -32,9 +33,9 @@ std::vector<at::Tensor> forward_warp_backward(
     const at::Tensor im0,
     const at::Tensor flow,
     const int interpolation_mode){
-  CHECK_INPUT(grad_output);
-  CHECK_INPUT(im0);
-  CHECK_INPUT(flow);
+  // CHECK_INPUT(grad_output);
+  // CHECK_INPUT(im0);
+  // CHECK_INPUT(flow);
   return forward_warp_cuda_backward(grad_output, im0, flow, (GridSamplerInterpolation)interpolation_mode);
 }
 

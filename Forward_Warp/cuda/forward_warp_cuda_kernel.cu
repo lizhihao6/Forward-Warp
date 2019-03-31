@@ -32,7 +32,8 @@ __global__ void forward_warp_cuda_forward_kernel(
     const int H,
     const int W,
     const GridSamplerInterpolation interpolation_mode) {
-  CUDA_KERNEL_LOOP(index, total_step) {
+    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+  CUDA_KERNEL_LOOP(index, total_step-1) {
     const int b = index / (H * W);
     const int h = (index-b*H*W) / W;
     const int w = index % W;
@@ -51,10 +52,10 @@ __global__ void forward_warp_cuda_forward_kernel(
         const scalar_t* im0_p = im0+get_im_index(b, 0, h, w, C, H, W);
         scalar_t* im1_p = im1+get_im_index(b, 0, y_f, x_f, C, H, W);
         for (int c = 0; c < C; ++c, im0_p+=H*W, im1_p+=H*W){
-            // atomicAdd(im1_p,     nw_k*(*im0_p));
-            // atomicAdd(im1_p+1,   ne_k*(*im0_p));
-            // atomicAdd(im1_p+W,   sw_k*(*im0_p));
-            // atomicAdd(im1_p+W+1, se_k*(*im0_p));
+            atomicAdd(im1_p,     nw_k*(*im0_p));
+            atomicAdd(im1_p+1,   ne_k*(*im0_p));
+            atomicAdd(im1_p+W,   sw_k*(*im0_p));
+            atomicAdd(im1_p+W+1, se_k*(*im0_p));
         }
       }
     } 
@@ -151,7 +152,6 @@ at::Tensor forward_warp_cuda_forward(
   const int H = im0.size(2);
   const int W = im0.size(3);
   const int total_step = B * H * W;
-
   AT_DISPATCH_FLOATING_TYPES(im0.type(), "forward_warp_forward_cuda", ([&] {
     forward_warp_cuda_forward_kernel<scalar_t>
     <<<GET_BLOCKS(total_step), CUDA_NUM_THREADS>>>(

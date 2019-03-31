@@ -1,5 +1,7 @@
-export CUDA_HOME=/usr/local/cuda-9.0/
-cd src/cuda/
-python setup.py install
+#!/bin/bash
+work_path=$(dirname $(readlink -f $0))
+cd ${work_path}/Forward_Warp/cuda/
+conda activate pytorch
+python setup.py install | grep "error"
 cd ../../
 python setup.py install
