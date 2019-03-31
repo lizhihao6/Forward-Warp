@@ -1,23 +1,31 @@
+## Foward Warp Pytorch Version
 
-Compile .cu first
+Has been tested in pytorch=0.4.0, python=3.6, CUDA=9.0
+
+### Install
+
 ```bash
-nvcc -c -o src/forward_cuda_kernel.cu.o src/forward_cuda_kernel.cu -x cu -Xcompiler -fPIC -arch=sm_52
+export CUDA_HOME=/usr/local/cuda #use your CUDA instead
+chmod a+x install.sh
+./install.sh
 ```
 
-Then run build.py
+### Test
+
 ```bash
-python build.py
+cd test
+python test.py
 ```
 
-$$
-pos_x = w+flow_x
-pos_y = h+flow_y
-c_x = ceil(x)
-c_y = ceil(y)
-f_x = floor(x)
-f_y = floor(y)
-im1[c_x, c_y] = f_x * f_y * im0[c_x, c_y]
-im1[c_x, f_y] = f_x * c_y * im0[c_x, c_y]
-im1[f_x, c_y] = c_x * f_y * im0[c_x, c_y]
-im1[f_x, f_y] = c_x * c_y * im0[c_x, c_y]
-$$
+### Usage
+
+```python
+from Forward_Warp import forward_warp
+
+fw = forward_warp()
+# default interpolation mode is Bilinear
+im2_bilinear = fw(im0, flow) 
+# use interpolation mode Nearest
+# Notice: Nearest input-flow's gradient will be zero when at backward.
+im2_nearest = fw(im0, flow, interpolation_mode="Nearest") 
+```
