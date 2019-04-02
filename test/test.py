@@ -8,7 +8,6 @@ from Forward_Warp import forward_warp
 
 
 if __name__ == "__main__":
-    torch.cuda.set_device(4)
 
     im0 = cv2.imread("im0.png")[np.newaxis, :, :, :]
     im1 = cv2.imread("im1.png")[np.newaxis, :, :, :]
