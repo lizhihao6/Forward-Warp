@@ -145,12 +145,14 @@ at::Tensor forward_warp_cuda_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const GridSamplerInterpolation interpolation_mode) {
+  printf("checkpoint 1 pass");
   auto im1 = at::zeros_like(im0);
   const int B = im0.size(0);
   const int C = im0.size(1);
   const int H = im0.size(2);
   const int W = im0.size(3);
   const int total_step = B * H * W;
+  printf("checkpoint 2 pass");
   AT_DISPATCH_FLOATING_TYPES(im0.type(), "forward_warp_forward_cuda", ([&] {
     forward_warp_cuda_forward_kernel<scalar_t>
     <<<GET_BLOCKS(total_step), CUDA_NUM_THREADS>>>(
@@ -160,8 +162,9 @@ at::Tensor forward_warp_cuda_forward(
       im1.data<scalar_t>(),
       B, C, H, W,
       interpolation_mode);
-  }));
-
+    }));
+  printf("checkpoint 3 pass");
+    
   return im1;
 }
 
