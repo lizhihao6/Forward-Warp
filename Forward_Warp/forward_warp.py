@@ -23,7 +23,7 @@ class forward_warp_function(Function):
 
         ctx.save_for_backward(im0, flow, interpolation_mode)
         if im0.is_cuda:
-            im1 = forward_warp_cuda.forward(im0, flow, interpolation_mode)
+            im1, vis = forward_warp_cuda.forward(im0, flow, interpolation_mode)
         else:
             im1 = Forward_Warp_Python.forward(im0, flow, interpolation_mode)
 

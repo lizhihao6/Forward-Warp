@@ -27,6 +27,7 @@ __global__ void forward_warp_cuda_forward_kernel(
     const scalar_t* im0,
     const scalar_t* flow,
     scalar_t* im1,
+    int* vis,
     const int B,
     const int C,
     const int H,
@@ -44,6 +45,11 @@ __global__ void forward_warp_cuda_forward_kernel(
       const int x_c = x_f + 1;
       const int y_c = y_f + 1;
       if(x_f>=0 && x_c<W && y_f>=0 && y_c<H){
+        int bias = b*H*W+y_f*W+x_f;
+        vis[bias]=1;
+        vis[bias+1]=1;
+        vis[bias+W]=1;
+        vis[bias+W+1]=1;
         const scalar_t nw_k = (x_c - x) * (y_c - y);
         const scalar_t ne_k = (x - x_f) * (y_c - y);
         const scalar_t sw_k = (x_c - x) * (y - y_f);
@@ -141,7 +147,7 @@ __global__ void forward_warp_cuda_backward_kernel(
   }
 }
 
-at::Tensor forward_warp_cuda_forward(
+std::vector<at::Tensor> forward_warp_cuda_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const GridSamplerInterpolation interpolation_mode) {
@@ -150,6 +156,7 @@ at::Tensor forward_warp_cuda_forward(
   const int C = im0.size(1);
   const int H = im0.size(2);
   const int W = im0.size(3);
+  auto vis = at::zeros({B, H, W}, at::kInt);
   const int total_step = B * H * W;
   AT_DISPATCH_FLOATING_TYPES(im0.type(), "forward_warp_forward_cuda", ([&] {
     forward_warp_cuda_forward_kernel<scalar_t>
@@ -158,11 +165,12 @@ at::Tensor forward_warp_cuda_forward(
       im0.data<scalar_t>(),
       flow.data<scalar_t>(),
       im1.data<scalar_t>(),
+      vis.data<scalar_t>(),
       B, C, H, W,
       interpolation_mode);
   }));
 
-  return im1;
+  return {im1, vis};
 }
 
 std::vector<at::Tensor> forward_warp_cuda_backward(

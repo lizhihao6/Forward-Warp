@@ -4,7 +4,7 @@
 #include "forward_warp.h"
 using at::native::detail::GridSamplerInterpolation;
 
-at::Tensor forward_warp_cuda_forward(
+std::vector<at::Tensor> forward_warp_cuda_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const GridSamplerInterpolation interpolation_mode);
@@ -19,7 +19,7 @@ std::vector<at::Tensor> forward_warp_cuda_backward(
 // #define CHECK_CONTIGUOUS(x) AT_ASSERT(x.is_contiguous(), #x " must be contiguous")
 // #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
-at::Tensor forward_warp_forward(
+std::vector<at::Tensor> forward_warp_forward(
     const at::Tensor im0, 
     const at::Tensor flow,
     const int interpolation_mode){
