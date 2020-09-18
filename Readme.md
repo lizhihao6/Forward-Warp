@@ -22,10 +22,11 @@ python test.py
 ```python
 from Forward_Warp import forward_warp
 
-fw = forward_warp()
 # default interpolation mode is Bilinear
+fw = forward_warp()
 im2_bilinear = fw(im0, flow) 
 # use interpolation mode Nearest
 # Notice: Nearest input-flow's gradient will be zero when at backward.
-im2_nearest = fw(im0, flow, interpolation_mode="Nearest") 
+fw = forward_warp(interpolation_mode="Nearest")  
+im2_nearest = fw(im0, flow) 
 ```
