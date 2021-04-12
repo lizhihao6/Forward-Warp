@@ -13,8 +13,8 @@ if __name__ == "__main__":
     im1 = cv2.imread("im1.png")[np.newaxis, :, :, :]
     with open("flow.pkl", "rb+") as f:
         flow = pickle.load(f)
-    im0 = torch.FloatTensor(im0).permute(0, 3, 1, 2)
-    im1 = torch.FloatTensor(im1).permute(0, 3, 1, 2)
+    im0 = torch.FloatTensor(im0).permute(0, 3, 1, 2).contiguous()
+    im1 = torch.FloatTensor(im1).permute(0, 3, 1, 2).contiguous()
     flow = torch.FloatTensor(flow)
 
     fw = forward_warp()
