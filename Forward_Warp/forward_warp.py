@@ -16,7 +16,7 @@ class forward_warp_function(Function):
         interpolation_mode: 0 is Bilinear, 1 is Nearest
         '''
         assert(len(im0.shape) == len(flow.shape) == 4)
-        assert(interpolation_mode is 0 or 1)
+        assert(interpolation_mode in (0, 1))
         assert(im0.shape[0] == flow.shape[0])
         assert(im0.shape[-2:] == flow.shape[1:3])
         assert(flow.shape[3] == 2)
@@ -48,7 +48,7 @@ class forward_warp(Module):
         Support interpolation mode with Bilinear and Nearest.
         '''
         super(forward_warp, self).__init__()
-        assert(interpolation_mode is "Bilinear" or "Nearest")
+        assert(interpolation_mode in ("Bilinear", "Nearest"))
         if(interpolation_mode is "Bilinear"):
             self.interpolation_mode = 0
         else:
