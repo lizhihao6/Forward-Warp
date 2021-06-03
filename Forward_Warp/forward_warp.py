@@ -39,7 +39,7 @@ class forward_warp_function(Function):
         else:
             im0_grad, flow_grad = Forward_Warp_Python.backward(
                 grad_output, im0, flow, ctx.interpolation_mode)
-        return im0_grad, flow_grad
+        return im0_grad, flow_grad, None
 
 
 class forward_warp(Module):
